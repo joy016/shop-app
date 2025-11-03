@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Threading.Tasks;
+using webApi.DTO.product;
 using webApi.Models;
 
 namespace webApi.Controllers
@@ -35,5 +36,49 @@ namespace webApi.Controllers
 
  
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateProduct([FromBody] CreateProduct createProductDto)
+        {
+            try {
+                //map or convert dto to product model
+                var productModel = new Product
+                {
+                    Name = createProductDto.Name,
+                    Description = createProductDto.Description,
+                    Price = createProductDto.Price,
+                    PictureUrl = createProductDto.PictureUrl,
+                    Category = createProductDto.Category,
+                    Brand = createProductDto.Brand,
+                    QuantityStocks = createProductDto.QuantityStocks
+
+                };
+
+                // use model to create product
+
+                await _context.Products.AddAsync(productModel);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet]
+        [Route("{Id:Guid}")]
+        public async Task<ActionResult<Product>> GetProductById([FromRoute]Guid Id)
+        {
+            var productItem = await _context.Products.FindAsync(Id);
+            if(productItem == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(productItem);
+        }
+
     }
 }
+ 

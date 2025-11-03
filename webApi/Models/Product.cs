@@ -1,8 +1,12 @@
-﻿namespace webApi.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace webApi.Models
 {
     public class Product
     {
-        public int Id { get; set; }
+      
+        public Guid Id { get; set; }
         public required string  Name { get; set; }
         public required string Description { get; set; }
         public long Price { get; set; }
